@@ -1,7 +1,7 @@
 {
     "author": "kai zhu <kaizhu256@gmail.com>",
     "buildNpmdoc": "utility2",
-    "description": "api documentation for [utility2 (v2017.4.16)](https://github.com/kaizhu256/node-utility2) [![npm package](https://img.shields.io/npm/v/npmdoc-utility2.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-utility2) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-utility2.svg)](https://travis-ci.org/npmdoc/node-npmdoc-utility2)",
+    "description": "#### api documentation for  [utility2 (v2017.4.17)](https://github.com/kaizhu256/node-utility2)  [![npm package](https://img.shields.io/npm/v/npmdoc-utility2.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-utility2) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-utility2.svg)](https://travis-ci.org/npmdoc/node-npmdoc-utility2)",
     "devDependencies": {
         "electron-lite": "kaizhu256/node-electron-lite#alpha",
         "utility2": "kaizhu256/node-utility2#alpha"
@@ -35,5 +35,5 @@
         "start": "(set -e; export PORT=${PORT:-8080}; utility2 start test.js)",
         "test": "(set -e; export PORT=$(utility2 shServerPortRandom); utility2 test test.js)"
     },
-    "version": "0.0.4"
+    "version": "0.0.5"
 }
