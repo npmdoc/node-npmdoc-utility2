@@ -51,7 +51,7 @@
 
         href="https://github.com/kaizhu256/node-utility2"
 
-    >utility2 (v2017.4.16)</a>
+    >utility2 (v2017.4.17)</a>
 </h1>
 <h4>the zero-dependency, swiss-army-knife utility for building, testing, and deploying webapps</h4>
 <div class="apidocSectionDiv"><a
@@ -720,7 +720,7 @@
 
             <a class="apidocElementLiA" href="#apidoc.element.utility2.swgg.dbRowListGetManyByOperator">
             function <span class="apidocSignatureSpan">utility2.swgg.</span>dbRowListGetManyByOperator
-            <span class="apidocSignatureSpan">(dbRowList, fieldName, operator, bb)</span>
+            <span class="apidocSignatureSpan">(dbRowList, fieldName, operator, bb, not)</span>
             </a>
 
         </li>
@@ -729,7 +729,7 @@
 
             <a class="apidocElementLiA" href="#apidoc.element.utility2.swgg.dbRowListGetManyByQuery">
             function <span class="apidocSignatureSpan">utility2.swgg.</span>dbRowListGetManyByQuery
-            <span class="apidocSignatureSpan">(dbRowList, query, fieldName)</span>
+            <span class="apidocSignatureSpan">(dbRowList, query, fieldName, not)</span>
             </a>
 
         </li>
@@ -799,8 +799,8 @@
 
         <li>
 
-            <a class="apidocElementLiA" href="#apidoc.element.utility2.swgg.dbTableTravisOrgCreate">
-            function <span class="apidocSignatureSpan">utility2.swgg.</span>dbTableTravisOrgCreate
+            <a class="apidocElementLiA" href="#apidoc.element.utility2.swgg.dbTableCustomOrgCreate">
+            function <span class="apidocSignatureSpan">utility2.swgg.</span>dbTableCustomOrgCreate
             <span class="apidocSignatureSpan">(options, onError)</span>
             </a>
 
@@ -808,8 +808,17 @@
 
         <li>
 
-            <a class="apidocElementLiA" href="#apidoc.element.utility2.swgg.dbTableTravisOrgUpdate">
-            function <span class="apidocSignatureSpan">utility2.swgg.</span>dbTableTravisOrgUpdate
+            <a class="apidocElementLiA" href="#apidoc.element.utility2.swgg.dbTableCustomOrgCrudGetManyByQuery">
+            function <span class="apidocSignatureSpan">utility2.swgg.</span>dbTableCustomOrgCrudGetManyByQuery
+            <span class="apidocSignatureSpan">(options)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.utility2.swgg.dbTableCustomOrgUpdate">
+            function <span class="apidocSignatureSpan">utility2.swgg.</span>dbTableCustomOrgUpdate
             <span class="apidocSignatureSpan">(options, onError)</span>
             </a>
 
@@ -1537,8 +1546,17 @@
 
         <li>
 
-            <a class="apidocElementLiA" href="#apidoc.element.utility2.swgg.requireExampleJsFromReadme">
-            function <span class="apidocSignatureSpan">utility2.swgg.</span>requireExampleJsFromReadme
+            <a class="apidocElementLiA" href="#apidoc.element.utility2.swgg.requireInSandbox">
+            function <span class="apidocSignatureSpan">utility2.swgg.</span>requireInSandbox
+            <span class="apidocSignatureSpan">(file)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.utility2.swgg.requireReadme">
+            function <span class="apidocSignatureSpan">utility2.swgg.</span>requireReadme
             <span class="apidocSignatureSpan">()</span>
             </a>
 
@@ -3472,11 +3490,11 @@ Object.keys(tmp).forEach(function (key) {
                 return;
             }
             Object.keys(moduleDict[prefix]).forEach(function (key) {
-                if (!(/^\w[\w\-.]*?$/).test(key) || !moduleDict[prefix][key]) {
-                    return;
-                }
-                // bug-workaround - buggy electron accessors
-                try {
+                // bug-workaround - buggy electron getter / setter
+                local.tryCatchOnError(function () {
+                    if (!(/^\w[\w\-.]*?$/).test(key) || !moduleDict[prefix][key]) {
+                        return;
+                    }
                     tmp = element === &#x27;prototype&#x27;
                         ? {
                             module: moduleDict[prefix][key].prototype,
@@ -3498,10 +3516,10 @@ Object.keys(tmp).forEach(function (key) {
                         tmp.module.prototype
                     ].some(function (dict) {
                         return Object.keys(dict || {}).some(function (key) {
-                            try {
+                            // bug-workaround - buggy electron getter / setter
+                            return local.tryCatchOnError(function () {
                                 return typeof dict[key] === &#x27;function&#x27;;
-                            } catch (ignore) {
-                            }
+                            }, console.error);
                         });
                     });
                     if (!isModule) {
@@ -3509,8 +3527,7 @@ Object.keys(tmp).forEach(function (key) {
                     }
                     options.circularList.push(tmp.module);
                     options.moduleDict[tmp.name] = tmp.module;
-                } catch (ignore) {
-                }
+                }, console.error);
             });
         });
     });
@@ -3525,12 +3542,12 @@ tmp.forEach(function (element) {
 // init moduleDict child
 local.<span class="apidocCodeKeywordSpan">apidocModuleDictAdd</span>(options, options.moduleDict);
 // init moduleExtraDict
-local.fs.readdirSync(options.dir).sort().forEach(function (file) {
-    try {
-        local.fs.readdirSync(options.dir + &#x27;/&#x27; + file)
-            .sort()
-            .forEach(function (file2) {
-                file2 = file + &#x27;/&#x27; + file2;
+module = options.moduleExtraDict[options.env.npm_package_name] =
+    options.moduleExtraDict[options.env.npm_package_name] || {};
+[1, 2, 3, 4].forEach(function (depth) {
+    options.libFileList = options.libFileList.concat(
+        // http://stackoverflow.com
+        // /questions/4509624/how-to-limit-depth-for-recursive-file-list
 ...</pre></li>
     </ul>
 
@@ -4664,7 +4681,10 @@ case &#x27;application/x-www-form-urlencoded&#x27;:
         onError();
         return;
     }
-    local.objectSetDefault(options, { blacklistDict: local });
+    local.objectSetDefault(options, {
+        blacklistDict: local,
+        require: local.requireInSandbox
+    });
     // create apidoc.html
     local.fsWriteFileWithMkdirpSync(
         local.env.npm_config_dir_build + &#x27;/apidoc.html&#x27;,
@@ -4827,7 +4847,7 @@ local.testCase_buildCustomOrg_default = local.testCase_buildCustomOrg_default ||
         // try to recover from error
         setTimeout(onError, error &#x26;&#x26; local.timeoutDefault);
     };
-    // try to salvage uncaughtException
+    // try to recover from uncaughtException
     process.on(&#x27;uncaughtException&#x27;, onError2);
     onParallel = local.utility2.onParallel(onError2);
     onParallel.counter += 1;
@@ -4866,14 +4886,14 @@ local.testCase_buildCustomOrg_default = local.testCase_buildCustomOrg_default ||
         dir: local.env.npm_package_buildCustomOrg,
         modeNoApidoc: true,
         modulePathList: options.modulePathList,
+        require: local.requireInSandbox,
         template: local.assetsDict[&#x27;/assets.readmeCustomOrg.&#x27; + local.env.GITHUB_ORG +
             &#x27;.template.md&#x27;]
     });
     local.fs.writeFileSync(&#x27;README.md&#x27;, options.readme);
+    console.error(&#x27;created customOrg file://&#x27; + process.cwd() + &#x27;/README.md\n&#x27;);
     // re-build package.json
-    options.packageJson.description = (/\w.*/).exec(options.readme)[0]
-        .replace((/ {2,}/g), &#x27; &#x27;)
-        .trim();
+    options.packageJson.description = options.readme.split(&#x27;\n&#x27;)[2].trim();
     local.fs.writeFileSync(
         &#x27;package.json&#x27;,
         local.jsonStringifyOrdered(options.packageJson, null, 4) + &#x27;\n&#x27;
@@ -5045,8 +5065,8 @@ local.testCase_buildReadme_default = local.testCase_buildReadme_default || funct
         (/\nutility2-comment --&#x3e;(?:\\n\\\n){4}[^`]*?^&#x3c;!-- utility2-comment\\n\\\n/m),
         // customize build-script
         (/\n# internal build-script\n[\S\s]*?^- build_ci\.sh\n/m),
-        (/\nshBuildCiPost\(\) \{\(set -e\n[^`]*?\n\)\}\n/),
-        (/\nshBuildCiPre\(\) \{\(set -e\n[^`]*?\n\)\}\n/)
+        (/\nshBuildCiAfter\(\) \{\(set -e\n[^`]*?\n\)\}\n/),
+        (/\nshBuildCiBefore\(\) \{\(set -e\n[^`]*?\n\)\}\n/)
     ].forEach(function (rgx) {
         // handle large string-replace
         options.dataFrom.replace(rgx, function (match0) {
@@ -5527,7 +5547,7 @@ case &#x27;put&#x27;:
         headers: {
             // github oauth authentication
             Authorization: &#x27;token &#x27; + process.env.GITHUB_TOKEN,
-            // bug-workaround - github api requires user-agent header
+            // bug-workaround - https://developer.github.com/v3/#user-agent-required
             &#x27;User-Agent&#x27;: &#x27;undefined&#x27;
         },
         message: options.message,
@@ -6454,11 +6474,11 @@ if (element.isDescending) {
     <h2>
         <a href="#apidoc.element.utility2.swgg.dbRowListGetManyByOperator" id="apidoc.element.utility2.swgg.dbRowListGetManyByOperator">
         function <span class="apidocSignatureSpan">utility2.swgg.</span>dbRowListGetManyByOperator
-        <span class="apidocSignatureSpan">(dbRowList, fieldName, operator, bb)</span>
+        <span class="apidocSignatureSpan">(dbRowList, fieldName, operator, bb, not)</span>
         </a>
     </h2>
     <ul>
-    <li>description and source-code<pre class="apidocCodePre">dbRowListGetManyByOperator = function (dbRowList, fieldName, operator, bb) {
+    <li>description and source-code<pre class="apidocCodePre">dbRowListGetManyByOperator = function (dbRowList, fieldName, operator, bb, not) {
 <span class="apidocCodeCommentSpan">/*
  * this function will get the dbRow&#x27;s in dbRowList with the given operator
  */
@@ -6565,7 +6585,7 @@ if (element.isDescending) {
         }
         // optimization - for-loop
         for (jj = fieldValue.length - 1; jj &#x3e;= 0; jj -= 1) {
-            if (test(fieldValue[jj], bb, typeof fieldValue[jj], typeof2)) {
+            if (not ^ test(fieldValue[jj], bb, typeof fieldValue[jj], typeof2)) {
                 result.push(dbRowList[ii]);
                 break;
             }
@@ -6574,22 +6594,22 @@ if (element.isDescending) {
     return result;
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-local.dbRowListGetManyByQuery = function (dbRowList, query, fieldName) {
-/*
- * this function will get the dbRow&#x27;s in dbRowList with the given query
- */
-    var bb, dbRowDict, result;
-    result = dbRowList;
-    if (!(query &#x26;&#x26; typeof query === &#x27;object&#x27;)) {
-        result = local.<span class="apidocCodeKeywordSpan">dbRowListGetManyByOperator</span>(result, fieldName, &#x27;$eq&#x27;,
-query);
-        return result;
-    }
-    Object.keys(query).some(function (key) {
-        bb = query[key];
-        if (key === &#x27;$or&#x27; &#x26;&#x26; Array.isArray(bb)) {
-            dbRowDict = {};
-            bb.forEach(function (query) {
+* this function will get the dbRow&#x27;s in dbRowList with the given query
+*/
+   var bb, dbRowDict, result;
+   // optimization - convert to boolean
+   not = !!not;
+   result = dbRowList;
+   if (!(query &#x26;&#x26; typeof query === &#x27;object&#x27;)) {
+       result = local.<span class="apidocCodeKeywordSpan">dbRowListGetManyByOperator</span>(result, fieldName, &#x27;$eq&#x27;,
+query, not);
+       return result;
+   }
+   Object.keys(query).some(function (key) {
+       bb = query[key];
+       switch (key) {
+       case &#x27;$not&#x27;:
+           key = fieldName;
 ...</pre></li>
     </ul>
 
@@ -6598,23 +6618,33 @@ query);
     <h2>
         <a href="#apidoc.element.utility2.swgg.dbRowListGetManyByQuery" id="apidoc.element.utility2.swgg.dbRowListGetManyByQuery">
         function <span class="apidocSignatureSpan">utility2.swgg.</span>dbRowListGetManyByQuery
-        <span class="apidocSignatureSpan">(dbRowList, query, fieldName)</span>
+        <span class="apidocSignatureSpan">(dbRowList, query, fieldName, not)</span>
         </a>
     </h2>
     <ul>
-    <li>description and source-code<pre class="apidocCodePre">dbRowListGetManyByQuery = function (dbRowList, query, fieldName) {
+    <li>description and source-code<pre class="apidocCodePre">dbRowListGetManyByQuery = function (dbRowList, query, fieldName, not) {
 <span class="apidocCodeCommentSpan">/*
  * this function will get the dbRow&#x27;s in dbRowList with the given query
  */
 </span>    var bb, dbRowDict, result;
+    // optimization - convert to boolean
+    not = !!not;
     result = dbRowList;
     if (!(query &#x26;&#x26; typeof query === &#x27;object&#x27;)) {
-        result = local.dbRowListGetManyByOperator(result, fieldName, &#x27;$eq&#x27;, query);
+        result = local.dbRowListGetManyByOperator(result, fieldName, &#x27;$eq&#x27;, query, not);
         return result;
     }
     Object.keys(query).some(function (key) {
         bb = query[key];
-        if (key === &#x27;$or&#x27; &#x26;&#x26; Array.isArray(bb)) {
+        switch (key) {
+        case &#x27;$not&#x27;:
+            key = fieldName;
+            not = !not;
+            break;
+        case &#x27;$or&#x27;:
+            if (!Array.isArray(bb)) {
+                break;
+            }
             dbRowDict = {};
             bb.forEach(function (query) {
                 // recurse
@@ -6628,11 +6658,11 @@ query);
             return !result.length;
         }
         if (key[0] === &#x27;$&#x27;) {
-            result = local.dbRowListGetManyByOperator(result, fieldName, key, bb);
+            result = local.dbRowListGetManyByOperator(result, fieldName, key, bb, not);
             return !result.length;
         }
         // recurse
-        result = local.dbRowListGetManyByQuery(result, bb, key);
+        result = local.dbRowListGetManyByQuery(result, bb, key, not);
         return !result.length;
     });
     return result;
@@ -6953,19 +6983,19 @@ dbTable1&#x22; });
 
 
     <h2>
-        <a href="#apidoc.element.utility2.swgg.dbTableTravisOrgCreate" id="apidoc.element.utility2.swgg.dbTableTravisOrgCreate">
-        function <span class="apidocSignatureSpan">utility2.swgg.</span>dbTableTravisOrgCreate
+        <a href="#apidoc.element.utility2.swgg.dbTableCustomOrgCreate" id="apidoc.element.utility2.swgg.dbTableCustomOrgCreate">
+        function <span class="apidocSignatureSpan">utility2.swgg.</span>dbTableCustomOrgCreate
         <span class="apidocSignatureSpan">(options, onError)</span>
         </a>
     </h2>
     <ul>
-    <li>description and source-code<pre class="apidocCodePre">dbTableTravisOrgCreate = function (options, onError) {
+    <li>description and source-code<pre class="apidocCodePre">dbTableCustomOrgCreate = function (options, onError) {
 <span class="apidocCodeCommentSpan">/*
- * this function will create a persistent dbTableTravisOrg
+ * this function will create a persistent dbTableCustomOrg
  */
 </span>    options = local.objectSetDefault(options, { githubOrg: local.env.GITHUB_ORG });
     options = local.objectSetDefault(options, {
-        name: &#x27;TravisOrg.&#x27; + options.githubOrg,
+        name: &#x27;CustomOrg.&#x27; + options.githubOrg,
         sizeLimit: 1000,
         sortDefault: [{
             fieldName: &#x27;_id&#x27;
@@ -6977,8 +7007,8 @@ dbTable1&#x22; });
             fieldName: &#x27;active&#x27;
         }]
     });
-    local.dbTableTravisOrg = local.db.dbTableCreateOne(options, onError);
-    return local.dbTableTravisOrg;
+    local.dbTableCustomOrg = local.db.dbTableCreateOne(options, onError);
+    return local.dbTableCustomOrg;
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
          */
@@ -6987,11 +7017,11 @@ options = local.objectSetDefault(options, { githubOrg: local.env.GITHUB_ORG });
 local.onNext(options, function (error, data) {
     switch (options.modeNext) {
     case 1:
-        self = local.dbTableTravisOrg =
-            local.<span class="apidocCodeKeywordSpan">dbTableTravisOrgCreate</span>(options, options.onNext);
+        self = local.dbTableCustomOrg =
+            local.<span class="apidocCodeKeywordSpan">dbTableCustomOrgCreate</span>(options, options.onNext);
         break;
     case 2:
-        self = local.dbTableTravisOrg = data;
+        self = local.dbTableCustomOrg = data;
         data = {
             headers: {
                 &#x27;Travis-API-Version&#x27;: &#x27;3&#x27;,
@@ -7002,26 +7032,67 @@ local.onNext(options, function (error, data) {
 
 
     <h2>
-        <a href="#apidoc.element.utility2.swgg.dbTableTravisOrgUpdate" id="apidoc.element.utility2.swgg.dbTableTravisOrgUpdate">
-        function <span class="apidocSignatureSpan">utility2.swgg.</span>dbTableTravisOrgUpdate
+        <a href="#apidoc.element.utility2.swgg.dbTableCustomOrgCrudGetManyByQuery" id="apidoc.element.utility2.swgg.dbTableCustomOrgCrudGetManyByQuery">
+        function <span class="apidocSignatureSpan">utility2.swgg.</span>dbTableCustomOrgCrudGetManyByQuery
+        <span class="apidocSignatureSpan">(options)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">dbTableCustomOrgCrudGetManyByQuery = function (options) {
+<span class="apidocCodeCommentSpan">/*
+ * this function will query dbTableCustomOrg
+ */
+</span>    options = local.objectSetDefault(options, { githubOrg: local.env.GITHUB_ORG });
+    options = local.objectSetDefault(options, {
+        query: { buildStartedAt: { $not: { $gt: new Date(Date.now() - (
+            Number(options.olderThanLast) || 0
+        )).toISOString() } } }
+    }, 2);
+    console.error(&#x27;dbTableCustomOrgCrudGetManyByQuery - &#x27; + JSON.stringify(options));
+    return local.dbTableCustomOrg.crudGetManyByQuery(options);
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+        });
+    }, local.exit);
+    return;
+case &#x27;dbTableCustomOrgCrudGetManyByQuery&#x27;:
+    local.dbTableCustomOrgCreate(JSON.parse(process.argv[3] || &#x27;{}&#x27;), function (error) {
+        // validate no error occurred
+        local.assert(!error, error);
+        console.log(local.<span class="apidocCodeKeywordSpan">dbTableCustomOrgCrudGetManyByQuery</span>(
+            JSON.parse(process.argv[3] || &#x27;{}&#x27;)
+        )
+            .map(function (element) {
+                return element._id;
+            })
+            .join(&#x27;\n&#x27;));
+    });
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.utility2.swgg.dbTableCustomOrgUpdate" id="apidoc.element.utility2.swgg.dbTableCustomOrgUpdate">
+        function <span class="apidocSignatureSpan">utility2.swgg.</span>dbTableCustomOrgUpdate
         <span class="apidocSignatureSpan">(options, onError)</span>
         </a>
     </h2>
     <ul>
-    <li>description and source-code<pre class="apidocCodePre">dbTableTravisOrgUpdate = function (options, onError) {
+    <li>description and source-code<pre class="apidocCodePre">dbTableCustomOrgUpdate = function (options, onError) {
 <span class="apidocCodeCommentSpan">/*
- * this function will update dbTableTravisOrg with active, public repos
+ * this function will update dbTableCustomOrg with active, public repos
  */
 </span>    var count, dbRowList, self;
     options = local.objectSetDefault(options, { githubOrg: local.env.GITHUB_ORG });
     local.onNext(options, function (error, data) {
         switch (options.modeNext) {
         case 1:
-            self = local.dbTableTravisOrg =
-                local.dbTableTravisOrgCreate(options, options.onNext);
+            self = local.dbTableCustomOrg =
+                local.dbTableCustomOrgCreate(options, options.onNext);
             break;
         case 2:
-            self = local.dbTableTravisOrg = data;
+            self = local.dbTableCustomOrg = data;
             data = {
                 headers: {
                     &#x27;Travis-API-Version&#x27;: &#x27;3&#x27;,
@@ -7044,11 +7115,32 @@ local.onNext(options, function (error, data) {
                     offset: 100,
                     sort_by: &#x27;asc&#x27;
                 }, {
+                    offset: 200,
+                    sort_by: &#x27;asc&#x27;
+                }, {
+                    offset: 300,
+                    sort_by: &#x27;asc&#x27;
+                }, {
+                    offset: 400,
+                    sort_by: &#x27;asc&#x27;
+                }, {
                     offset: Math.floor(Math.random() * count) - 100,
                     sort_by: &#x27;asc&#x27;
                 }, {
                     offset: Math.floor(Math.random() * count) - 100,
                     sort_by: &#x27;asc&#x27;
+                }, {
+                    offset: 0,
+                    sort_by: &#x27;desc&#x27;
+                }, {
+                    offset: count - 500,
+                    sort_by: &#x27;desc&#x27;
+                }, {
+                    offset: count - 400,
+                    sort_by: &#x27;desc&#x27;
+                }, {
+                    offset: count - 300,
+                    sort_by: &#x27;desc&#x27;
                 }, {
                     offset: count - 200,
                     sort_by: &#x27;desc&#x27;
@@ -7091,24 +7183,7 @@ local.onNext(options, function (error, data) {
                 .map(function (dbRow) {
                     data = dbRow.current_build || {};
                     return {
-                        _id: dbRow.name.replace(&#x27;node-&#x27; + options.githubOrg + &#x27;-&#x27;, &#x27;&#x27;),
-                        active: dbRow.active,
-                        buildDuration: data.duration,
-                        buildFinishedAt: data.finished_at,
-                        buildStartedAt: data.started_at,
-                        buildState: data.state
-                    };
-                }));
-            self.save(options.onNext);
-            break;
-        default:
-            local.setTimeoutOnError(onError, error, self);
-        }
-    });
-    options.modeNext = 0;
-    options.onNext();
-    return self;
-}</pre></li>
+                        _ ...</pre></li>
     <li>example usage<pre class="apidocCodePre">...
             .map(function (element) {
                 return element._id;
@@ -7116,9 +7191,9 @@ local.onNext(options, function (error, data) {
             .join(&#x27;\n&#x27;));
     });
     return;
-case &#x27;dbTableTravisOrgUpdate&#x27;:
-    local.<span class="apidocCodeKeywordSpan">dbTableTravisOrgUpdate</span>(
-        JSON.parse(process.argv[3]),
+case &#x27;dbTableCustomOrgUpdate&#x27;:
+    local.<span class="apidocCodeKeywordSpan">dbTableCustomOrgUpdate</span>(
+        JSON.parse(process.argv[3] || &#x27;{}&#x27;),
         local.onErrorThrow
     );
     return;
@@ -9607,9 +9682,9 @@ options.dir = local.<span class="apidocCodeKeywordSpan">moduleDirname</span>(
     options.modulePathList || local.module.paths
 );
 local.objectSetDefault(options, {
-    env: {},
-    packageJson: JSON.parse(readExample(&#x27;package.json&#x27;))
-});
+    env: { npm_package_description: &#x27;&#x27; },
+    packageJson: JSON.parse(readExample(&#x27;package.json&#x27;)),
+    require: function (file) {
 ...</pre></li>
     </ul>
 
@@ -10688,11 +10763,11 @@ if (!options.testRunBeforeDone) {
     local.<span class="apidocCodeKeywordSpan">onReadyBefore</span>();
 };
 
-local.timeElapsedPoll = function (options) {
+local.throwError = function () {
 /*
- * this function will poll options.timeElapsed
+ * this function will throw an error
  */
-    options = local.timeElapsedStart(options);
+    throw new Error();
 ...</pre></li>
     </ul>
 
@@ -10947,11 +11022,11 @@ options.modeNext = 10;
 local.<span class="apidocCodeKeywordSpan">processSpawnWithTimeout</span>(&#x27;electron&#x27;, [
     __filename,
     &#x27;browserTest&#x27;,
-    &#x27;--disable-overlay-scrollbar&#x27;,
     &#x27;--enable-logging&#x27;
 ], {
     env: options,
     stdio: options.modeSilent
+        ? &#x27;ignore&#x27;
 ...</pre></li>
     </ul>
 
@@ -11118,7 +11193,7 @@ local.testCase_profileXxx_default = function (options, onError) {
                 [&#x27;-c&#x27;, &#x27;find . -type f | grep -v &#x27; +
 /* jslint-ignore-begin */
 &#x27;&#x22;\
-/\\.\\|.*\\(\\b\\|_\\)\\(\\.\\d\\|\
+/\\.\\|\\(\\b\\|_\\)\\(\\.\\d\\|\
 archive\\|artifact\\|\
 bower_component\\|build\\|\
 coverage\\|\
@@ -11133,7 +11208,7 @@ node_module\\|\
 rollup\\|\
 swp\\|\
 tmp\\|\
-vendor\\)\\(\\b\\|[_s]\\)\
+vendor\\)s\\{0,1\\}\\(\\b\\|_\\)\
 &#x22; &#x27; +
 /* jslint-ignore-end */
                     &#x27;| tr &#x22;\\n&#x22; &#x22;\\000&#x22; | xargs -0 grep -in &#x22;&#x27; +
@@ -11171,7 +11246,7 @@ vendor\\)\\(\\b\\|[_s]\\)\
     // init process.stdout
     process.stdout._writeDefault = process.stdout._writeDefault ||
         process.stdout._write;
-    process.stdout._write = function (chunk, encodin ...</pre></li>
+    process.stdout._write = function (chunk, en ...</pre></li>
     <li>example usage<pre class="apidocCodePre">...
                 &#x27;assets.swgg.petstore.json&#x27;,
                 local.env.SWAGGER_JSON_URL
@@ -11209,31 +11284,92 @@ vendor\\)\\(\\b\\|[_s]\\)\
   }
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-                return &#x27;&#x27;;
-            },
-            stdout: {}
-        }
-        : local.process;
-    require = function (key) {
-        try {
-            return local[key] || local.<span class="apidocCodeKeywordSpan">require</span>(key);
-        } catch (ignore) {
-        }
-    };
-}());
+    })
+    .slice(0, 128);
+// init moduleMain
+local.tryCatchOnError(function () {
+    console.error(&#x27;apidocCreate - requiring &#x27; + options.dir + &#x27; ...&#x27;);
+    moduleMain = {};
+    moduleMain = options.moduleDict[options.env.npm_package_name] ||
+        options.<span class="apidocCodeKeywordSpan">require</span>(options.dir) ||
+        options.require(options.dir + &#x27;/&#x27; + (options.packageJson.bin)[
+            Object.keys(options.packageJson.bin)[0]
+        ]) || {};
+    console.error(&#x27;apidocCreate - ... required &#x27; + options.dir);
+}, console.error);
+tmp = {};
+// handle case where module is a function
 ...</pre></li>
     </ul>
 
 
 
     <h2>
-        <a href="#apidoc.element.utility2.swgg.requireExampleJsFromReadme" id="apidoc.element.utility2.swgg.requireExampleJsFromReadme">
-        function <span class="apidocSignatureSpan">utility2.swgg.</span>requireExampleJsFromReadme
+        <a href="#apidoc.element.utility2.swgg.requireInSandbox" id="apidoc.element.utility2.swgg.requireInSandbox">
+        function <span class="apidocSignatureSpan">utility2.swgg.</span>requireInSandbox
+        <span class="apidocSignatureSpan">(file)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">requireInSandbox = function (file) {
+<span class="apidocCodeCommentSpan">/*
+ * this function will require the file in a sandbox-lite env
+ */
+</span>    var exports, mockDict, mockList, tmp;
+    mockList = [
+        [ local.global, {
+            setImmediate: local.nop,
+            setInterval: local.nop,
+            setTimeout: local.nop
+        }]
+    ];
+    [
+        [local, &#x27;child_process&#x27;],
+        [local, &#x27;cluster&#x27;],
+        [local, &#x27;fs&#x27;],
+        [local, &#x27;http&#x27;],
+        [local, &#x27;https&#x27;],
+        [local, &#x27;net&#x27;],
+        [local, &#x27;repl&#x27;],
+        [local.global, &#x27;process&#x27;],
+        [process, &#x27;stdin&#x27;]
+    ].forEach(function (element) {
+        tmp = element[0][element[1]];
+        mockDict = {};
+        Object.keys(tmp).forEach(function (key) {
+            if (typeof tmp[key] === &#x27;function&#x27; &#x26;&#x26; !(
+                    /^(?:fs\.Read|fs\.read|process\.binding|process\.dlopen)/
+                ).test(element[1] + &#x27;.&#x27; + key)) {
+                mockDict[key] = function () {
+                    return;
+                };
+                // coverage-hack
+                mockDict[key]();
+            }
+        });
+        mockList.push([ module, mockDict ]);
+    });
+    local.testMock(mockList, function (onError) {
+        local.tryCatchOnError(function () {
+            exports = require(file);
+        }, console.error);
+        onError();
+    }, local.onErrorThrow);
+    return exports;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.utility2.swgg.requireReadme" id="apidoc.element.utility2.swgg.requireReadme">
+        function <span class="apidocSignatureSpan">utility2.swgg.</span>requireReadme
         <span class="apidocSignatureSpan">()</span>
         </a>
     </h2>
     <ul>
-    <li>description and source-code<pre class="apidocCodePre">requireExampleJsFromReadme = function () {
+    <li>description and source-code<pre class="apidocCodePre">requireReadme = function () {
 <span class="apidocCodeCommentSpan">/*
  * this function will require and export example.js embedded in README.md
  */
@@ -11345,7 +11481,7 @@ vendor\\)\\(\\b\\|[_s]\\)\
         // re-init local from example.js\n\
         case \&#x27;node\&#x27;:\n\
             local = (local.global.utility2_rollup || require(\&#x27;utility2\&#x27;))\n\
-                .<span class="apidocCodeKeywordSpan">requireExampleJsFromReadme</span>();\n\
+                .<span class="apidocCodeKeywordSpan">requireReadme</span>();\n\
             break;\n\
         }\n\
         // export local\n\
@@ -12958,21 +13094,21 @@ local.objectSetDefault(options, {
     }, onError2);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
+                };
+                // coverage-hack
+                mockDict[key]();
+            }
+        });
+        mockList.push([ module, mockDict ]);
     });
+    local.<span class="apidocCodeKeywordSpan">testMock</span>(mockList, function (onError) {
+        local.tryCatchOnError(function () {
+            exports = require(file);
+        }, console.error);
+        onError();
+    }, local.onErrorThrow);
+    return exports;
 };
-
-local.testCase_FormData_error = function (options, onError) {
-/*
- * this function will test FormData&#x27;s error handling-behavior
- */
-    local.<span class="apidocCodeKeywordSpan">testMock</span>([
-        [local.FormData.prototype, { read: function (onError) {
-            onError(local.errorDefault);
-        } }]
-    ], function (onError) {
-        options = {};
-        options.data = new local.FormData();
-        options.method = &#x27;POST&#x27;;
 ...</pre></li>
     </ul>
 
@@ -12989,7 +13125,8 @@ local.testCase_FormData_error = function (options, onError) {
 <span class="apidocCodeCommentSpan">/*
  * this function will create test-report artifacts
  */
-</span>    // print test-report summary
+</span>    testReport = local.objectSetDefault(testReport, { testPlatformList: [] });
+    // print test-report summary
     console.error(&#x27;\n&#x27; + new Array(56).join(&#x27;-&#x27;) + &#x27;\n&#x27; + testReport.testPlatformList
         .filter(function (testPlatform) {
             // if testPlatform has no tests, then filter it out
@@ -13041,25 +13178,28 @@ local.testCase_FormData_error = function (options, onError) {
     // if any test failed, then exit with non-zero exit-code
     console.error(&#x27;\n&#x27; + local.env.MODE_BUILD +
         &#x27; - &#x27; + testReport.testsFailed + &#x27; failed tests\n&#x27;);
-    // exit with number of tests failed
-    local.exit(testReport.testsFailed);
+    // print test-report detail
+    if (testReport.testsFailed) {
+        console.error(&#x27;\n&#x27; + JSON.stringify(testReport, null, 4) + &#x27;\n&#x27;);
+    }
+    return testReport;
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-    options = [
-        // suppress console.error
-        [console, { error: local.nop }],
-        [local, { exit: local.nop }]
-    ];
-    local.testMock(options, function (onError) {
-        // test exit handling-behavior
-        local.<span class="apidocCodeKeywordSpan">testReportCreate</span>(local.testReport);
-        onError();
-    }, onError);
-};
-
-local.testCase_webpage_error = function (options, onError) {
-/*
- * this function will test webpage&#x27;s error handling-behavior
+            console.error(&#x27;onParallelListSpawn - [&#x27; + (onParallel.ii + 1) +
+                &#x27; of &#x27; + options.list.length + &#x27;] exitCode &#x27; + exitCode);
+            onParallel(exitCode &#x26;&#x26; new Error(exitCode), options);
+        });
+    }, local.exit);
+    return;
+case &#x27;testReportCreate&#x27;:
+    local.exit(local.<span class="apidocCodeKeywordSpan">testReportCreate</span>(local.tryCatchOnError(function () {
+        return require(local.env.npm_config_dir_build + &#x27;/test-report.json&#x27;);
+    }, local.onErrorDefault)).testsFailed);
+    return;
+}
+// init lib
+[
+    &#x27;lib.swgg.js&#x27;
 ...</pre></li>
     </ul>
 
@@ -13174,21 +13314,21 @@ local.testCase_webpage_error = function (options, onError) {
                 break;
             // update pending tests ...</pre></li>
     <li>example usage<pre class="apidocCodePre">...
+    );
+}, local.nop);
 if (local._debugTryCatchErrorCaught) {
     onNext(local._debugTryCatchErrorCaught);
     return;
 }
-console.error(&#x27;\nbrowserTest - merging test-report from &#x27; +
-    options.fileTestReport + &#x27;\n&#x27;);
 if (!options.modeTestIgnore) {
     local.<span class="apidocCodeKeywordSpan">testReportMerge</span>(local.testReport, data);
+    console.error(&#x27;\nbrowserTest - merged test-report from file://&#x27; +
+        options.fileTestReport + &#x27;\n&#x27;);
 }
 // create test-report.json
 local.fs.writeFileSync(
     local.env.npm_config_dir_build + &#x27;/test-report.json&#x27;,
     JSON.stringify(local.testReport)
-);
-onNext(data &#x26;&#x26; data.testsFailed &#x26;&#x26; new Error(data.testsFailed));
 ...</pre></li>
     </ul>
 
@@ -13231,14 +13371,6 @@ onNext(data &#x26;&#x26; data.testsFailed &#x26;&#x26; new Error(data.testsFaile
         // mock proces.exit
         exit = process.exit;
         process.exit = local.nop;
-        /* istanbul ignore next */
-        if (local.env.npm_package_buildCustomOrg) {
-            local.exportsCustomOrg = {};
-            local.tryCatchOnError(function () {
-                local.exportsCustomOrg = require(process.cwd() + &#x27;/node_modules/&#x27; +
-                    local.env.npm_package_buildCustomOrg);
-            }, local.onErrorDefault);
-        }
         break;
     }
     // init modeTestCase
@@ -13302,7 +13434,15 @@ onNext(data &#x26;&#x26; data.testsFailed &#x26;&#x26; new Error(data.testsFaile
                 testCase.status = &#x27;failed&#x27;;
                 console.error(&#x27;\ntestCase &#x27; + testCase.name + &#x27; failed\n&#x27; +
                     error.message + &#x27;\n&#x27; + error.stack);
-                testCase.erro ...</pre></li>
+                testCase.errorStack = testCase.errorStack ||
+                    error.message + &#x27;\n&#x27; + error.stack;
+                // validate errorStack is non-empty
+                local.assert(
+                    testCase.errorStack,
+                    &#x27;invalid errorStack &#x27; + testCase.errorStack
+                );
+            }
+            // if already done, then do nothing ...</pre></li>
     <li>example usage<pre class="apidocCodePre">...
 case &#x27;testRunButton1&#x27;:
     // show tests
